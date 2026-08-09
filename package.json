@@ -1,0 +1,58 @@
+{
+  "name": "metascope",
+  "version": "0.1.0",
+  "description": "Metarhia terminal presentation tool",
+  "author": "Timur Shemsedinov <timur.shemsedinov@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "metarhia",
+    "presentation",
+    "cli",
+    "viewer",
+    "syntax",
+    "markdown",
+    "terminal"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metarhia/metascope.git"
+  },
+  "bugs": {
+    "url": "https://github.com/metarhia/metascope/issues",
+    "email": "timur.shemsedinov@gmail.com"
+  },
+  "homepage": "https://metarhia.com",
+  "funding": {
+    "type": "patreon",
+    "url": "https://www.patreon.com/tshemsedinov"
+  },
+  "bin": {
+    "metascope": "./bin/metascope.js"
+  },
+  "main": "lib/app.js",
+  "files": [
+    "bin/",
+    "lib/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "npm run lint && node --test",
+    "start": "node bin/metascope.js",
+    "install:local": "node scripts/install-local.js",
+    "uninstall:local": "node scripts/uninstall-local.js",
+    "lint": "eslint . && prettier --check \"**/*.js\" \"**/*.json\" \"**/*.md\"",
+    "fix": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\""
+  },
+  "dependencies": {
+    "concolor": "^1.1.4",
+    "metautil": "^5.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.130",
+    "eslint": "^9.39.4",
+    "eslint-config-metarhia": "^9.1.9",
+    "metaskills": "^1.0.5"
+  }
+}
