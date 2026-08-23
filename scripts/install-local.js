@@ -73,8 +73,71 @@ const removeMarkedBlock = (filePath) => {
   }
 };
 
-console.log('metascope: installing dependencies…');
-run('npm', ['install', '--omit=dev']);
+const RUNTIME_DEPS = ['metautil', 'concolor'];
+
+const canRequire = (name) => {
+  try {
+    require.resolve(name, { paths: [root] });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const lockUsesLocalPaths = () => {
+  let lock;
+  try {
+    lock = JSON.parse(
+      fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'),
+    );
+  } catch {
+    return false;
+  }
+  for (const [key, meta] of Object.entries(lock.packages || {})) {
+    if (key.startsWith('../') || key.startsWith('file:')) return true;
+    if (!meta || typeof meta !== 'object') continue;
+    if (meta.link === true) return true;
+    const resolved = meta.resolved;
+    if (typeof resolved !== 'string') continue;
+    if (resolved.startsWith('file:') || resolved.startsWith('.')) return true;
+  }
+  return false;
+};
+
+const removeSymlinkedRuntimeDeps = () => {
+  for (const name of RUNTIME_DEPS) {
+    const depPath = path.join(root, 'node_modules', name);
+    try {
+      if (fs.lstatSync(depPath).isSymbolicLink()) fs.unlinkSync(depPath);
+    } catch {
+      // missing
+    }
+  }
+};
+
+const installDepsFromNpm = () => {
+  removeSymlinkedRuntimeDeps();
+  if (lockUsesLocalPaths()) {
+    console.log('metascope: removing local-path lockfile (npm registry only)');
+    try {
+      fs.unlinkSync(path.join(root, 'package-lock.json'));
+    } catch {
+      // ignore
+    }
+  }
+  console.log('metascope: installing dependencies from npm…');
+  run('npm', ['install', '--omit=dev']);
+};
+
+installDepsFromNpm();
+
+if (!RUNTIME_DEPS.every(canRequire)) {
+  console.error(
+    'metascope: could not install runtime deps from npm:',
+    RUNTIME_DEPS.filter((name) => !canRequire(name)).join(', '),
+  );
+  process.exit(1);
+}
 
 fs.chmodSync(binSrc, 0o755);
 fs.mkdirSync(destDir, { recursive: true });
