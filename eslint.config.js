@@ -7,13 +7,4 @@ module.exports = [
   {
     ignores: ['test/fixtures/**'],
   },
-  {
-    rules: {
-      quotes: [
-        'error',
-        'single',
-        { avoidEscape: true, allowTemplateLiterals: true },
-      ],
-    },
-  },
 ];
