@@ -47,7 +47,8 @@ Uninstall:
 npm run uninstall:local
 ```
 
-## Alternatives: `npm link` / `npm install -g .`
+Alternatives: `npm link` / `npm install -g .`
+---
 
 ## Quick start (no install)
 
@@ -75,7 +76,7 @@ Background brightness marks the level — no `#` characters in the view.
 
 ###### Heading level 6
 
-Inline styles: **bold**, _italic_, `inline code`, `Array`, `Object`, and a [link](https://metarhia.com).
+Inline styles: **bold**, *italic*, `inline code`, `Array`, `Object`, and a [link](https://metarhia.com).
 
 ---
 
@@ -202,32 +203,33 @@ Plain text with a URL https://metarhia.com and www.example.com
 
 ## Keyboard
 
-| Key                 | Action                       |
-| :------------------ | :--------------------------- |
-| `↑` / `k`           | Line up                      |
-| `↓` / `j`           | Line down                    |
-| `←` / `b` / `PgUp`  | Page up                      |
-| `→` / `PgDn`        | Page down                    |
-| `Ctrl+U` / `Ctrl+D` | Half page                    |
-| `g` / `Home`        | Top                          |
-| `G` / `End`         | Bottom                       |
-| `Space`             | Toggle status line           |
-| `/`                 | Search                       |
-| `n` / `N`           | Next / previous match        |
-| `l`                 | Toggle line numbers          |
-| `w`                 | Toggle soft wrap             |
-| `H` / `L`           | Horizontal scroll (wrap off) |
-| `r`                 | Reload file                  |
-| `?`                 | Help                         |
-| `Esc`               | Back to picker / quit        |
-| `q`                 | Quit                         |
+| Key | Action |
+|:----|:-------|
+| `↑` / `k` | Line up |
+| `↓` / `j` | Line down |
+| `←` / `b` / `PgUp` | Page up |
+| `→` / `PgDn` | Page down |
+| `Ctrl+U` / `Ctrl+D` | Half page |
+| `g` / `Home` | Top |
+| `G` / `End` | Bottom |
+| `Space` | Toggle status line |
+| `/` | Search |
+| `n` / `N` | Next / previous match |
+| `l` | Toggle line numbers |
+| `w` | Toggle soft wrap |
+| `H` / `L` | Horizontal scroll (wrap off) |
+| `r` | Reload file |
+| `?` | Help |
+| `Esc` | Back to picker / quit |
+| `q` | Quit |
 
 Alignment demo:
 
-| Left        | Center | Right |
-| :---------- | :----: | ----: |
-| a           |  mid   |     1 |
-| longer text |   x    |    42 |
+| Left | Center | Right |
+|:-----|:------:|------:|
+| a | mid | 1 |
+| longer text | x | 42 |
+
 
 ## Formats
 
