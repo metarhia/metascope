@@ -1,6 +1,6 @@
 # Hello metascope
 
-This is **bold** and _italic_ with a [link](https://metarhia.com).
+This is **bold** and *italic* with a [link](https://metarhia.com).
 
 ## Code
 

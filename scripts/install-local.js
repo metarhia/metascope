@@ -17,22 +17,18 @@ const dest = path.join(destDir, 'metascope');
 const MARK_BEGIN = '# >>> metascope >>>';
 const MARK_END = '# <<< metascope <<<';
 
-const shellBlock =
-  `${MARK_BEGIN}
+const shellBlock = `${MARK_BEGIN}
 # Prefer metascope as the system text viewer (mc F3 / $VIEWER).
 # Do NOT set PAGER — git log/branch and man would open metascope.
 export PATH="$HOME/.local/bin:$PATH"
 export VIEWER="$HOME/.local/bin/metascope"
 # Clear a leftover PAGER=metascope from older installs.
-` +
-  `if [ "\${PAGER-}" = "$HOME/.local/bin/metascope" ] || ` +
-  `[ "\${PAGER-}" = "metascope" ]; then
+if [ "\${PAGER-}" = "$HOME/.local/bin/metascope" ] || [ "\${PAGER-}" = "metascope" ]; then
   unset PAGER
 fi
 # Override /etc/profile.d/mc.sh alias so F3 always sees VIEWER.
 if [ -f /usr/libexec/mc/mc-wrapper.sh ]; then
-  alias mc='VIEWER="$HOME/.local/bin/metascope" ` +
-  `PATH="$HOME/.local/bin:$PATH" . /usr/libexec/mc/mc-wrapper.sh'
+  alias mc='VIEWER="$HOME/.local/bin/metascope" PATH="$HOME/.local/bin:$PATH" . /usr/libexec/mc/mc-wrapper.sh'
 fi
 ${MARK_END}
 `;
@@ -109,9 +105,7 @@ exec node ${JSON.stringify(binSrc)} "$@"
     console.log(`metascope: installed wrapper ${dest}`);
     console.log(`(symlink failed: ${err.message}; used wrapper instead)`);
   } catch (err2) {
-    console.error(
-      `metascope: could not install bin at ${dest}: ${err2.message}`,
-    );
+    console.error(`metascope: could not install bin at ${dest}: ${err2.message}`);
     process.exit(1);
   }
 }
@@ -135,13 +129,19 @@ try {
   const envDir = path.join(home, '.config', 'environment.d');
   fs.mkdirSync(envDir, { recursive: true });
   const envFile = path.join(envDir, 'metascope.conf');
-  fs.writeFileSync(envFile, `PATH=${destDir}:$PATH\nVIEWER=${dest}\n`);
+  fs.writeFileSync(
+    envFile,
+    `PATH=${destDir}:$PATH\nVIEWER=${dest}\n`,
+  );
   console.log(`metascope: wrote ${envFile}`);
 } catch (err) {
   console.log(`metascope: skip environment.d (${err.message})`);
 }
 
-for (const rc of [path.join(home, '.zshrc'), path.join(home, '.profile')]) {
+for (const rc of [
+  path.join(home, '.zshrc'),
+  path.join(home, '.profile'),
+]) {
   if (!fs.existsSync(rc)) continue;
   try {
     upsertShellConfig(rc);
@@ -151,11 +151,9 @@ for (const rc of [path.join(home, '.zshrc'), path.join(home, '.profile')]) {
 }
 
 // Midnight Commander:
-// - use_internal_view=false → F3 uses getenv("VIEWER") from the
-//   *mc process* (Ctrl-O subshell env does not count) and caches it;
-//   missing → /usr/bin/view (vim).
-// - use_internal_view=true → F3 uses mc.ext.ini View= via /bin/sh
-//   (reliable).
+// - use_internal_view=false → F3 uses getenv("VIEWER") from the *mc process*
+//   (Ctrl-O subshell env does not count) and caches it; missing → /usr/bin/view (vim).
+// - use_internal_view=true  → F3 uses mc.ext.ini View= via /bin/sh (reliable).
 const MC_VIEW_LINE = `View=${dest} %f`;
 
 const configureMidnightCommander = () => {
@@ -193,9 +191,8 @@ const configureMidnightCommander = () => {
   let changed = false;
   if (setSectionView('Include/editor')) changed = true;
   if (setSectionView('Default')) changed = true;
-  if (setSectionView('JavaScript')) {
-    changed = true;
-  } else if (/\[JavaScript\]/.test(ext)) {
+  if (setSectionView('JavaScript')) changed = true;
+  else if (/\[JavaScript\]/.test(ext)) {
     ext = ext.replace(
       /(\[JavaScript\]\n(?:Shell=.*\n)?)/,
       `$1${MC_VIEW_LINE}\n`,
@@ -210,8 +207,7 @@ const configureMidnightCommander = () => {
 
   if (fs.existsSync(iniPath)) {
     let ini = fs.readFileSync(iniPath, 'utf8');
-    // true: F3 uses mc.ext View= (absolute metascope),
-    // not getenv cache / vim view
+    // true: F3 uses mc.ext View= (absolute metascope), not getenv cache / vim view
     if (/^use_internal_view=/m.test(ini)) {
       ini = ini.replace(/^use_internal_view=.*/m, 'use_internal_view=true');
     } else {
@@ -233,10 +229,9 @@ const configureTerminator = () => {
   if (!fs.existsSync(termCfg)) return;
 
   let text = fs.readFileSync(termCfg, 'utf8');
-  // Terminator custom_command=mc starts /usr/bin/mc with NO bashrc
-  // → no VIEWER.
-  const pathPrefix = `${destDir}:/usr/bin:/bin`;
-  const wrapped = `env VIEWER=${dest} PATH=${pathPrefix} /usr/bin/mc`;
+  // Terminator custom_command=mc starts /usr/bin/mc with NO bashrc → no VIEWER.
+  const wrapped =
+    `env VIEWER=${dest} PATH=${destDir}:/usr/bin:/bin /usr/bin/mc`;
 
   if (/^\s*custom_command\s*=\s*/m.test(text)) {
     text = text.replace(
