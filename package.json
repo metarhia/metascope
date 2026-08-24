@@ -30,6 +30,8 @@
     "start": "node bin/metascope.js",
     "install:local": "node scripts/install-local.js",
     "uninstall:local": "node scripts/uninstall-local.js",
+    "test": "npm run lint && npm run types && node --test \"test/*.js\"",
+    "types": "tsc -p tsconfig.json",
     "lint": "eslint . && prettier --check \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/*.ts\"",
     "fix": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/*.ts\""
   },

@@ -1,0 +1,44 @@
+'use strict';
+
+const { test } = require('node:test');
+const assert = require('node:assert');
+
+const table = require('../lib/render/table.js');
+const { isTableSepLine, looksLikeTableRow } = table;
+const { frameTable, consumeTable } = table;
+const { stripAnsi } = require('../lib/wrap.js');
+
+test('isTableSepLine accepts markdown alignment rows', () => {
+  assert.strictEqual(isTableSepLine('| --- | :---: | ---: |'), true);
+  assert.strictEqual(isTableSepLine('| --- |'), true);
+  assert.strictEqual(isTableSepLine('| abc | def |'), false);
+  assert.strictEqual(isTableSepLine('no pipes'), false);
+});
+
+test('looksLikeTableRow rejects lists that happen to have pipes', () => {
+  assert.strictEqual(looksLikeTableRow('| a | b |'), true);
+  assert.strictEqual(looksLikeTableRow('- item | x'), false);
+  assert.strictEqual(looksLikeTableRow('1. item | x'), false);
+});
+
+test('frameTable draws a box with header text', () => {
+  const lines = frameTable(['Name', 'N'], ['left', 'right'], [['Ada', '1']], {
+    width: 40,
+  });
+  const plain = lines.map(stripAnsi).join('\n');
+  assert.ok(plain.includes('Name'));
+  assert.ok(plain.includes('Ada'));
+  assert.ok(plain.includes('┌'));
+  assert.ok(plain.includes('└'));
+});
+
+test('consumeTable reads header, sep, and body', () => {
+  const src = ['| A | B |', '| --- | --- |', '| 1 | 2 |', '', 'after'];
+  const identity = (cell) => cell;
+  const taken = consumeTable(src, 0, identity, 40);
+  assert.ok(taken);
+  assert.strictEqual(taken.next, 3);
+  const plain = taken.lines.map(stripAnsi).join('\n');
+  assert.ok(plain.includes('A'));
+  assert.ok(plain.includes('1'));
+});
