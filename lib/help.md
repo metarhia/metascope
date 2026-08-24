@@ -2,13 +2,13 @@
 
 | Key             | Action                            |
 | --------------- | --------------------------------- |
-| ↑ / k           | line up                           |
-| ↓ / j           | line down                         |
-| ← / b / PgUp    | page up                           |
+| ↑               | line up                           |
+| ↓               | line down                         |
+| ← / PgUp        | page up                           |
 | → / PgDn        | page down                         |
 | Ctrl+U / Ctrl+D | half page                         |
-| g / Home        | top                               |
-| G / End         | bottom                            |
+| Home            | top                               |
+| End             | bottom                            |
 | Space           | toggle status                     |
 | /               | search                            |
 | n / N           | next / prev match                 |
