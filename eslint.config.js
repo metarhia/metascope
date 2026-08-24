@@ -5,6 +5,6 @@ const init = require('eslint-config-metarhia');
 module.exports = [
   ...init,
   {
-    ignores: ['test/fixtures/**'],
+    ignores: ['test/fixtures/**', '.cursor/**'],
   },
 ];
