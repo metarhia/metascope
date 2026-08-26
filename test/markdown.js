@@ -18,7 +18,8 @@ test('inline paints emphasis, code, and links', () => {
   assert.ok(plain.includes('italic'));
   assert.ok(plain.includes('code'));
   assert.ok(plain.includes('n'));
-  assert.ok(painted.includes('\x1b'));
+  assert.ok(!plain.includes('https://x'));
+  assert.ok(painted.includes('\x1b]8;;https://x'));
 });
 
 test('renderMarkdown extracts fences, lists, quotes, and tables', () => {
@@ -34,6 +35,8 @@ test('renderMarkdown extracts fences, lists, quotes, and tables', () => {
   const plain = lines.map(stripAnsi).join('\n');
   assert.ok(plain.includes('Hello metascope'));
   assert.ok(plain.includes('item one'));
+  assert.ok(plain.includes('link'));
+  assert.ok(!plain.includes('https://metarhia.com'));
 });
 
 test('renderMarkdown records js init as shared prelude', () => {
