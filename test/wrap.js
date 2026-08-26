@@ -17,11 +17,14 @@ test('asText coerces unknown values', () => {
   assert.strictEqual(asText(42), '42');
 });
 
-test('stripAnsi removes SGR sequences only', () => {
+test('stripAnsi removes SGR and OSC sequences', () => {
   const painted = '\x1b[32mhi\x1b[0m';
   assert.strictEqual(stripAnsi(painted), 'hi');
   assert.strictEqual(stripAnsi('plain'), 'plain');
   assert.strictEqual(stripAnsi(null), '');
+  const link = '\x1b]8;;https://x\x07click\x1b]8;;\x07';
+  assert.strictEqual(stripAnsi(link), 'click');
+  assert.strictEqual(visibleWidth(link), 5);
 });
 
 test('visibleWidth counts grapheme cells not UTF-16 units', () => {
