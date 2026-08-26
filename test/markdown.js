@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { inline, renderMarkdown } = require('../lib/render/markdown.js');
-const { stripAnsi } = require('../lib/wrap.js');
+const { stripAnsi, hrefAtCol } = require('../lib/wrap.js');
 
 const FIXTURES = path.join(__dirname, 'fixtures');
 
@@ -20,6 +20,8 @@ test('inline paints emphasis, code, and links', () => {
   assert.ok(plain.includes('n'));
   assert.ok(!plain.includes('https://x'));
   assert.ok(painted.includes('\x1b]8;;https://x'));
+  const linkCol = stripAnsi(painted).indexOf('n');
+  assert.strictEqual(hrefAtCol(painted, linkCol), 'https://x');
 });
 
 test('renderMarkdown extracts fences, lists, quotes, and tables', () => {
