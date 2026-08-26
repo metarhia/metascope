@@ -6,7 +6,7 @@ const assert = require('node:assert');
 const wrap = require('../lib/wrap.js');
 const { asText, stripAnsi, visibleWidth } = wrap;
 const { wrapLine, wrapLines, wrapCodeLine } = wrap;
-const { padEndVisible, sliceVisible } = wrap;
+const { padEndVisible, sliceVisible, hrefAtCol } = wrap;
 
 test('asText coerces unknown values', () => {
   assert.strictEqual(asText('ok'), 'ok');
@@ -73,4 +73,24 @@ test('padEndVisible and sliceVisible respect ANSI width', () => {
   assert.strictEqual(visibleWidth(padded), 5);
   const sliced = sliceVisible(padded, 0, 2);
   assert.strictEqual(stripAnsi(sliced), 'ab');
+});
+
+test('hrefAtCol finds OSC 8 link columns', () => {
+  const open = '\x1b]8;;https://x\x07';
+  const close = '\x1b]8;;\x07';
+  const line = `ab${open}cd${close}e`;
+  assert.strictEqual(hrefAtCol(line, 0), null);
+  assert.strictEqual(hrefAtCol(line, 1), null);
+  assert.strictEqual(hrefAtCol(line, 2), 'https://x');
+  assert.strictEqual(hrefAtCol(line, 3), 'https://x');
+  assert.strictEqual(hrefAtCol(line, 4), null);
+  assert.strictEqual(hrefAtCol(line, 99), null);
+});
+
+test('wrapLine keeps OSC 8 href on wrapped rows', () => {
+  const painted = '\x1b]8;;https://x\x07hello world\x1b]8;;\x07';
+  const rows = wrapLine(painted, 5);
+  assert.ok(rows.length >= 2);
+  assert.strictEqual(hrefAtCol(rows[0], 0), 'https://x');
+  assert.strictEqual(hrefAtCol(rows[1], 0), 'https://x');
 });
