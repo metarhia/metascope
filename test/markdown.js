@@ -26,8 +26,11 @@ test('inline paints emphasis, code, and links', () => {
 
 test('renderMarkdown extracts fences, lists, quotes, and tables', () => {
   const src = fs.readFileSync(path.join(FIXTURES, 'sample.md'), 'utf8');
-  const { lines, blocks, prelude } = renderMarkdown(src, { width: 80 });
+  const { lines, blocks, prelude, origins } = renderMarkdown(src, {
+    width: 80,
+  });
   assert.ok(lines.length > 0);
+  assert.strictEqual(origins.length, lines.length);
   assert.strictEqual(blocks.length, 1);
   assert.strictEqual(blocks[0].lang, 'js');
   assert.ok(blocks[0].source.includes('const x = 1'));
