@@ -17,7 +17,7 @@
 | ▶ click  | run code block (js/ts/bash)       |
 | ■ click  | stop running block                |
 | ✕ click  | hide output panel                 |
-| drag     | select text (copied on release)   |
+| drag     | select source (copied on release) |
 | click    | clear selection                   |
 | y        | copy selection again              |
 | Esc      | stop run / clear selection / quit |

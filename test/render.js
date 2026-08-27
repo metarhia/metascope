@@ -13,8 +13,12 @@ const FIXTURES = path.join(__dirname, 'fixtures');
 
 test('render markdown reflows prose and finds fences', () => {
   const src = fs.readFileSync(path.join(FIXTURES, 'sample.md'), 'utf8');
-  const { lines, blocks } = render('md', src, { width: 72, wrap: true });
+  const { lines, blocks, origins } = render('md', src, {
+    width: 72,
+    wrap: true,
+  });
   assert.ok(lines.length > 0);
+  assert.strictEqual(origins.length, lines.length);
   assert.strictEqual(blocks.length, 1);
   assert.strictEqual(blocks[0].lang, 'js');
 });
@@ -36,8 +40,12 @@ test('render appends a run panel when outputs has file-0', () => {
   const outputs = new Map([
     ['file-0', { ok: true, code: 0, text: 'ok\n', running: false }],
   ]);
-  const { lines, blocks } = render('js', '1;\n', { width: 40, outputs });
+  const { lines, blocks, origins } = render('js', '1;\n', {
+    width: 40,
+    outputs,
+  });
   assert.ok(blocks[0].close);
+  assert.strictEqual(origins.length, lines.length);
   const plain = lines.map(stripAnsi).join('\n');
   assert.ok(plain.includes('ok'));
   assert.ok(plain.includes('exit 0'));
@@ -51,6 +59,7 @@ test('render does not throw on fixture files', () => {
     const lang = detectLang(full);
     const out = render(lang, src, { width: 60, wrap: true });
     assert.ok(out.lines.length > 0, name);
+    assert.strictEqual(out.origins.length, out.lines.length, name);
     assert.ok(Array.isArray(out.blocks), name);
   }
 });

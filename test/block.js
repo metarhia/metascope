@@ -42,6 +42,7 @@ test('frameCodeBlock adds copy and play for runnable js', () => {
   assert.ok(framed.play);
   assert.strictEqual(framed.play.kind, 'play');
   assert.ok(framed.lines.length > 2);
+  assert.strictEqual(framed.origins.length, framed.lines.length);
   const plain = framed.lines.map(stripAnsi).join('\n');
   assert.ok(plain.includes('const x = 1'));
 });
@@ -57,10 +58,11 @@ test('frameCodeBlock skips play for init setup', () => {
 });
 
 test('frameQuoteBlock prefixes wrapped rows with a rule', () => {
-  const lines = frameQuoteBlock(['hello quote'], { width: 40 });
-  const plain = lines.map(stripAnsi).join('\n');
+  const framed = frameQuoteBlock(['hello quote'], { width: 40 });
+  const plain = framed.lines.map(stripAnsi).join('\n');
   assert.ok(plain.includes('│'));
   assert.ok(plain.includes('hello quote'));
+  assert.strictEqual(framed.origins.length, framed.lines.length);
 });
 
 test('frameRunOutput shows exit status for finished runs', () => {
