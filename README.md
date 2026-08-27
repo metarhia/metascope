@@ -66,25 +66,22 @@ Non-TTY / pipes: prints rendered output once and exits.
 
 ## Keyboard
 
-| Key                 | Action                       |
-| :------------------ | :--------------------------- |
-| `↑` / `k`           | Line up                      |
-| `↓` / `j`           | Line down                    |
-| `←` / `b` / `PgUp`  | Page up                      |
-| `→` / `PgDn`        | Page down                    |
-| `Ctrl+U` / `Ctrl+D` | Half page                    |
-| `g` / `Home`        | Top                          |
-| `G` / `End`         | Bottom                       |
-| `Space`             | Toggle status line           |
-| `/`                 | Search                       |
-| `n` / `N`           | Next / previous match        |
-| `l`                 | Toggle line numbers          |
-| `w`                 | Toggle soft wrap             |
-| `H` / `L`           | Horizontal scroll (wrap off) |
-| `r`                 | Reload file                  |
-| `?`                 | Help                         |
-| `Esc`               | Back to picker / quit        |
-| `q`                 | Quit                         |
+| Key          | Action                |
+| :----------- | :-------------------- |
+| `↑`          | Line up               |
+| `↓`          | Line down             |
+| `←` / `PgUp` | Page up               |
+| `→` / `PgDn` | Page down             |
+| `Home`       | Top                   |
+| `End`        | Bottom                |
+| `Space`      | Toggle status line    |
+| `/`          | Search                |
+| `n` / `N`    | Next / previous match |
+| `l`          | Toggle line numbers   |
+| `r`          | Reload file           |
+| `?`          | Help                  |
+| `Esc`        | Back to picker / quit |
+| `q`          | Quit                  |
 
 ## Formats
 
