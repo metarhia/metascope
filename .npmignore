@@ -5,3 +5,4 @@ node_modules
 *.done
 .DS_Store
 */skills/metaskills
+.cursor
