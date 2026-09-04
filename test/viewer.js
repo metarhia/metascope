@@ -72,21 +72,20 @@ test('js init fence drag copies the fence including init', () => {
   const block = viewer.blocks[0];
   assert.strictEqual(block.play, null);
   const pad = { lineIndex: block.startLine, innerCol: 10, viewCol: 10 };
-  assert.deepStrictEqual(viewer.hitTestHover(pad), {
-    blockId: block.id,
-    kind: 'copy',
-  });
+  assert.strictEqual(viewer.hitTestHover(pad), null);
+  assert.strictEqual(viewer.fenceSource(block), fence);
 });
 
 test('copy button jitter on a small block is a control click', () => {
   const pragma = '\x27use strict\x27;';
   const viewer = viewerWith('js', `${pragma}\n`);
   const block = viewer.blocks[0];
+  const col = block.copy.col0;
   const lineIndex = block.startLine + block.copy.row;
-  const pos = { lineIndex, innerCol: 10, viewCol: 10 };
+  const pos = { lineIndex, innerCol: col, viewCol: col };
   const dragged = {
     start: pos,
-    last: { lineIndex, innerCol: 11, viewCol: 11 },
+    last: { lineIndex, innerCol: col + 1, viewCol: col + 1 },
     selecting: true,
   };
   assert.deepStrictEqual(viewer.hitTestHover(pos), {
@@ -94,6 +93,26 @@ test('copy button jitter on a small block is a control click', () => {
     kind: 'copy',
   });
   assert.strictEqual(viewer.isControlClick(dragged, dragged.last), true);
+});
+
+test('click on js init body copies the example fence', () => {
+  const fence = [
+    '```js init',
+    '\x27use strict\x27;',
+    '',
+    '// Shared imports / helpers for examples below',
+    'const assert = require(\x27node:assert\x27);',
+    'const DEMO_NAME = \x27Metarhia\x27;',
+    '```',
+  ].join('\n');
+  const viewer = viewerWith('md', `${fence}\n`);
+  const body = lineWith(viewer.lines, 'use strict');
+  assert.ok(body >= 0);
+  const pos = { lineIndex: body, innerCol: 5, viewCol: 5 };
+  assert.strictEqual(viewer.hitTestHover(pos), null);
+  const block = viewer.blockAt(body);
+  assert.ok(block);
+  assert.strictEqual(viewer.fenceSource(block), fence);
 });
 
 test('selecting a markdown heading copies the hashes', () => {
