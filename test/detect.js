@@ -16,6 +16,7 @@ test('mapLang aliases fence tags and extensions', () => {
   assert.strictEqual(mapLang('htm'), 'html');
   assert.strictEqual(mapLang('sh'), 'bash');
   assert.strictEqual(mapLang('yml'), 'dot');
+  assert.strictEqual(mapLang('python'), 'py');
   assert.strictEqual(mapLang('unknown'), 'txt');
   assert.strictEqual(mapLang(''), 'txt');
   assert.strictEqual(mapLang(null), 'txt');
@@ -52,6 +53,7 @@ test('detectLang maps paths to canonical language ids', () => {
   assert.strictEqual(detectLang('Dockerfile'), 'dot');
   assert.strictEqual(detectLang('Makefile'), 'dot');
   assert.strictEqual(detectLang('app.log'), 'log');
+  assert.strictEqual(detectLang('circlecam.py'), 'py');
   assert.strictEqual(detectLang('notes.unknown'), 'txt');
 });
 
@@ -68,4 +70,5 @@ test('langLabel and isSupportedPath', () => {
   assert.strictEqual(isSupportedPath('a.md'), true);
   assert.strictEqual(isSupportedPath('types.d.ts'), true);
   assert.strictEqual(isSupportedPath('Makefile'), true);
+  assert.strictEqual(isSupportedPath('circlecam.py'), true);
 });
