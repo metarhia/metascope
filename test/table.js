@@ -4,7 +4,7 @@ const { test } = require('node:test');
 const assert = require('node:assert');
 
 const table = require('../lib/render/table.js');
-const { isTableSepLine, looksLikeTableRow } = table;
+const { isTableSepLine, looksLikeTableRow, startsTable } = table;
 const { frameTable, consumeTable } = table;
 const { stripAnsi } = require('../lib/wrap.js');
 
@@ -19,6 +19,14 @@ test('looksLikeTableRow rejects lists that happen to have pipes', () => {
   assert.strictEqual(looksLikeTableRow('| a | b |'), true);
   assert.strictEqual(looksLikeTableRow('- item | x'), false);
   assert.strictEqual(looksLikeTableRow('1. item | x'), false);
+});
+
+test('startsTable requires a separator on the next line', () => {
+  const rows = ['| A | B |', '| --- | --- |', '| 1 | 2 |'];
+  assert.strictEqual(startsTable(rows, 0), true);
+  assert.strictEqual(startsTable(['| not a table'], 0), false);
+  const flags = ['            | Qt.WindowType.FramelessWindowHint'];
+  assert.strictEqual(startsTable(flags, 0), false);
 });
 
 test('frameTable draws a box with header text', () => {

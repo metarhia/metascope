@@ -69,3 +69,17 @@ test('renderMarkdown uses file heading as run label', () => {
   const { blocks } = renderMarkdown(src, { width: 40 });
   assert.strictEqual(blocks[0].label, 'demo.js');
 });
+
+test('orphan pipe lines that are not tables still render', () => {
+  const src = [
+    'Qt.WindowType.Window',
+    '            | Qt.WindowType.FramelessWindowHint',
+    '            | Qt.WindowType.WindowStaysOnTopHint',
+    '',
+  ].join('\n');
+  const { lines } = renderMarkdown(src, { width: 80 });
+  assert.ok(lines.length > 0);
+  const plain = lines.map(stripAnsi).join('\n');
+  assert.ok(plain.includes('FramelessWindowHint'));
+  assert.ok(plain.includes('WindowStaysOnTopHint'));
+});
