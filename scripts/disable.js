@@ -63,9 +63,17 @@ if (fs.existsSync(extPath)) {
     let ext = fs.readFileSync(extPath, 'utf8');
     const before = ext;
     ext = ext.replace(/^View=.*\/metascope %f$/gm, 'View=');
+    const tsVideo = ext.match(/\[ts\]\n[^[]*/);
+    if (tsVideo) {
+      const next = tsVideo[0].replace(/^Type=MPEG\n/m, '');
+      if (next !== tsVideo[0]) {
+        const start = tsVideo.index;
+        ext = ext.slice(0, start) + next + ext.slice(start + tsVideo[0].length);
+      }
+    }
     if (ext !== before) {
       fs.writeFileSync(extPath, ext);
-      console.log(`metascope: restored View= in ${extPath}`);
+      console.log(`metascope: restored ${extPath}`);
     }
   } catch (err) {
     console.log(`metascope: skip mc.ext.ini (${err.message})`);

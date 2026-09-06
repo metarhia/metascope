@@ -14,7 +14,7 @@ metascope EXAMPLES.md
 
 ```bash
 cd .MetaTools/metascope
-npm run install:local
+npm run enable
 source ~/.bashrc   # or open a new terminal
 ```
 
@@ -33,8 +33,8 @@ $VIEWER path/to/file.md     # standard VIEWER
 metascope .
 ```
 
-Midnight Commander: install also sets F3 to `$VIEWER` in `~/.config/mc/mc.ext.ini`
-(`View=%var{VIEWER:less} %f`, `use_internal_view=false`). Restart `mc` after install.
+Midnight Commander: also sets F3 to `$VIEWER` in `~/.config/mc/mc.ext.ini`
+(`View=%var{VIEWER:less} %f`, `use_internal_view=false`). Restart `mc` after enabling.
 
 Manual (without install script):
 
@@ -46,13 +46,13 @@ export VIEWER="$HOME/.local/bin/metascope"
 Uninstall:
 
 ```bash
-npm run uninstall:local
+npm run disable
 ```
 
 Alternatives: `npm link` / `npm install -g .`
 ---
 
-## Quick start (no install)
+## Quick start (no enable)
 
 ```bash
 cd .MetaTools/metascope

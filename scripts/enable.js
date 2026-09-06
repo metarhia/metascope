@@ -222,6 +222,27 @@ for (const rc of [path.join(home, '.zshrc'), path.join(home, '.profile')]) {
 // - use_internal_view=true → F3 uses mc.ext.ini View= via /bin/sh
 //   (reliable).
 const MC_VIEW_LINE = `View=${dest} %f`;
+const MC_TS_VIDEO_TYPE = 'Type=MPEG';
+
+const restrictTsVideoToMpeg = (text) => {
+  const match = text.match(/\[ts\]\n[^[]*/);
+  if (!match) return text;
+  const block = match[0];
+  if (/^Type=/m.test(block)) return text;
+  if (!/^Shell=\.ts/m.test(block)) return text;
+  if (!/^Include=video/m.test(block)) return text;
+  const afterIgnore = block.replace(
+    /^(ShellIgnoreCase=true\n)/m,
+    `$1${MC_TS_VIDEO_TYPE}\n`,
+  );
+  const next =
+    afterIgnore !== block
+      ? afterIgnore
+      : block.replace(/^(Shell=\.ts\n)/m, `$1${MC_TS_VIDEO_TYPE}\n`);
+  if (next === block) return text;
+  const start = match.index;
+  return text.slice(0, start) + next + text.slice(start + block.length);
+};
 
 const configureMidnightCommander = () => {
   const mcDir = path.join(home, '.config', 'mc');
@@ -265,6 +286,12 @@ const configureMidnightCommander = () => {
       /(\[JavaScript\]\n(?:Shell=.*\n)?)/,
       `$1${MC_VIEW_LINE}\n`,
     );
+    changed = true;
+  }
+
+  const withMpegTs = restrictTsVideoToMpeg(ext);
+  if (withMpegTs !== ext) {
+    ext = withMpegTs;
     changed = true;
   }
 
@@ -328,7 +355,7 @@ try {
 
 const check = spawnSync(dest, ['--help'], { encoding: 'utf8' });
 if (check.status !== 0) {
-  console.error('metascope: install finished but binary failed to run:');
+  console.error('metascope: enable finished but binary failed to run:');
   console.error(check.stderr || check.stdout || check.error);
   process.exit(1);
 }

@@ -27,9 +27,8 @@
     "metautil": "^5.5.2"
   },
   "scripts": {
-    "start": "node bin/metascope.js",
-    "install:local": "node scripts/install-local.js",
-    "uninstall:local": "node scripts/uninstall-local.js",
+    "enable": "node scripts/enable.js",
+    "disable": "node scripts/disable.js",
     "test": "npm run lint && node --test \"test/*.js\"",
     "lint": "eslint . && prettier --check \"**/*.js\" \"**/*.json\" \"**/*.md\"",
     "fix": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\""
