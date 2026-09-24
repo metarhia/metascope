@@ -1,6 +1,6 @@
 {
   "name": "metascope",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Interactive terminal file viewer with syntax highlighting (Metarhia)",
   "license": "MIT",
   "keywords": [
@@ -37,6 +37,6 @@
     "eslint": "^9.39.4",
     "eslint-config-metarhia": "^9.1.9",
     "metaskills": "^1.0.4",
-    "prettier": "^3.8.4"
+    "prettier": "^3.9.8"
   }
 }
