@@ -17,6 +17,11 @@ test('mapLang aliases fence tags and extensions', () => {
   assert.strictEqual(mapLang('sh'), 'bash');
   assert.strictEqual(mapLang('yml'), 'dot');
   assert.strictEqual(mapLang('python'), 'py');
+  assert.strictEqual(mapLang('lisp'), 'lisp');
+  assert.strictEqual(mapLang('clojure'), 'lisp');
+  assert.strictEqual(mapLang('clj'), 'lisp');
+  assert.strictEqual(mapLang('cljs'), 'lisp');
+  assert.strictEqual(mapLang('racket'), 'lisp');
   assert.strictEqual(mapLang('unknown'), 'txt');
   assert.strictEqual(mapLang(''), 'txt');
   assert.strictEqual(mapLang(null), 'txt');
@@ -54,6 +59,11 @@ test('detectLang maps paths to canonical language ids', () => {
   assert.strictEqual(detectLang('Makefile'), 'dot');
   assert.strictEqual(detectLang('app.log'), 'log');
   assert.strictEqual(detectLang('circlecam.py'), 'py');
+  assert.strictEqual(detectLang('fact.lisp'), 'lisp');
+  assert.strictEqual(detectLang('fact.clj'), 'lisp');
+  assert.strictEqual(detectLang('fact.cljs'), 'lisp');
+  assert.strictEqual(detectLang('fact.cljc'), 'lisp');
+  assert.strictEqual(detectLang('fact.rkt'), 'lisp');
   assert.strictEqual(detectLang('notes.unknown'), 'txt');
 });
 
@@ -71,4 +81,6 @@ test('langLabel and isSupportedPath', () => {
   assert.strictEqual(isSupportedPath('types.d.ts'), true);
   assert.strictEqual(isSupportedPath('Makefile'), true);
   assert.strictEqual(isSupportedPath('circlecam.py'), true);
+  assert.strictEqual(isSupportedPath('fact.lisp'), true);
+  assert.strictEqual(langLabel('lisp'), 'lisp');
 });

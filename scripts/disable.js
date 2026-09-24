@@ -21,8 +21,8 @@ try {
   } else {
     console.log(`metascope: nothing to remove at ${dest}`);
   }
-} catch (err) {
-  console.log(`metascope: could not remove bin (${err.message})`);
+} catch (error) {
+  console.log(`metascope: could not remove bin (${error.message})`);
 }
 
 const dropIn = path.join(home, '.bashrc.d', 'metascope.sh');
@@ -52,8 +52,8 @@ for (const filePath of profiles) {
     text = text.replace(re, '');
     fs.writeFileSync(filePath, text);
     console.log(`metascope: cleaned ${filePath}`);
-  } catch (err) {
-    console.log(`metascope: skip ${filePath} (${err.message})`);
+  } catch (error) {
+    console.log(`metascope: skip ${filePath} (${error.message})`);
   }
 }
 
@@ -75,7 +75,7 @@ if (fs.existsSync(extPath)) {
       fs.writeFileSync(extPath, ext);
       console.log(`metascope: restored ${extPath}`);
     }
-  } catch (err) {
-    console.log(`metascope: skip mc.ext.ini (${err.message})`);
+  } catch (error) {
+    console.log(`metascope: skip mc.ext.ini (${error.message})`);
   }
 }

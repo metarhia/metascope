@@ -51,6 +51,16 @@ test('render appends a run panel when outputs has file-0', () => {
   assert.ok(plain.includes('exit 0'));
 });
 
+test('render lisp keeps source lines in a code frame', () => {
+  const src = '(defun id (x) x)\n';
+  const { lines, blocks } = render('lisp', src, { width: 80, wrap: true });
+  assert.strictEqual(blocks.length, 1);
+  assert.strictEqual(blocks[0].id, 'file-0');
+  assert.strictEqual(blocks[0].lang, 'lisp');
+  const plain = lines.map(stripAnsi).join('\n');
+  assert.ok(plain.includes('(defun id (x) x)'));
+});
+
 test('render python keeps source lines in a code frame', () => {
   const src = 'print(1)\n            | flags\n';
   const { lines, blocks } = render('py', src, { width: 80, wrap: true });

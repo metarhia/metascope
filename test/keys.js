@@ -3,7 +3,8 @@
 const { test } = require('node:test');
 const assert = require('node:assert');
 
-const { decodeKey, isIncompleteSequence } = require('../lib/keys.js');
+const keys = require('../lib/keys.js');
+const { decodeKey, sequenceLength, isIncompleteSequence } = keys;
 
 const ESC = String.fromCharCode(0x1b);
 
@@ -61,4 +62,15 @@ test('isIncompleteSequence waits for CSI and mouse tails', () => {
   assert.strictEqual(isIncompleteSequence(`${ESC}[A`), false);
   assert.strictEqual(isIncompleteSequence(`${ESC}O`), true);
   assert.strictEqual(isIncompleteSequence(`${ESC}OA`), false);
+  assert.strictEqual(isIncompleteSequence(`${ESC}[<0;1;2Mq`), false);
+});
+
+test('sequenceLength takes a complete prefix, not the whole buffer', () => {
+  const mouse = `${ESC}[<0;10;5M`;
+  assert.strictEqual(sequenceLength(mouse), mouse.length);
+  assert.strictEqual(sequenceLength(`${mouse}q`), mouse.length);
+  assert.strictEqual(sequenceLength(`${ESC}[A${ESC}[B`), `${ESC}[A`.length);
+  assert.strictEqual(sequenceLength('ab'), 2);
+  assert.strictEqual(sequenceLength(`${ESC}[`), 0);
+  assert.strictEqual(sequenceLength(ESC), 0);
 });

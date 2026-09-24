@@ -74,8 +74,8 @@ const removeMarkedBlock = (filePath) => {
     text = stripMarkedBlock(text);
     fs.writeFileSync(filePath, text);
     console.log(`metascope: cleaned old block from ${filePath}`);
-  } catch (err) {
-    console.log(`metascope: skip ${filePath} (${err.message})`);
+  } catch (error) {
+    console.log(`metascope: skip ${filePath} (${error.message})`);
   }
 };
 
@@ -158,8 +158,8 @@ try {
 try {
   fs.symlinkSync(binSrc, dest);
   console.log(`metascope: linked ${dest} → ${binSrc}`);
-} catch (err) {
-  // Never writeFile through an existing symlink — it overwrites the target.
+} catch (error) {
+  const symlinkMessage = error.message;
   try {
     fs.unlinkSync(dest);
   } catch {
@@ -169,13 +169,12 @@ try {
 exec node ${JSON.stringify(binSrc)} "$@"
 `;
   try {
-    // O_NOFOLLOW-like: open only if not a symlink; use wx after unlink
     fs.writeFileSync(dest, wrapper, { mode: 0o755, flag: 'wx' });
     console.log(`metascope: installed wrapper ${dest}`);
-    console.log(`(symlink failed: ${err.message}; used wrapper instead)`);
-  } catch (err2) {
+    console.log(`(symlink failed: ${symlinkMessage}; used wrapper instead)`);
+  } catch (error) {
     console.error(
-      `metascope: could not install bin at ${dest}: ${err2.message}`,
+      `metascope: could not install bin at ${dest}: ${error.message}`,
     );
     process.exit(1);
   }
@@ -191,8 +190,8 @@ try {
     console.log(`metascope: wrote ${dropIn}`);
     removeMarkedBlock(path.join(home, '.bashrc'));
   }
-} catch (err) {
-  console.log(`metascope: skip shell drop-in (${err.message})`);
+} catch (error) {
+  console.log(`metascope: skip shell drop-in (${error.message})`);
 }
 
 // systemd user environment (GUI terminals / some launchers)
@@ -202,16 +201,16 @@ try {
   const envFile = path.join(envDir, 'metascope.conf');
   fs.writeFileSync(envFile, `PATH=${destDir}:$PATH\nVIEWER=${dest}\n`);
   console.log(`metascope: wrote ${envFile}`);
-} catch (err) {
-  console.log(`metascope: skip environment.d (${err.message})`);
+} catch (error) {
+  console.log(`metascope: skip environment.d (${error.message})`);
 }
 
 for (const rc of [path.join(home, '.zshrc'), path.join(home, '.profile')]) {
   if (!fs.existsSync(rc)) continue;
   try {
     upsertShellConfig(rc);
-  } catch (err) {
-    console.log(`metascope: skip ${rc} (${err.message})`);
+  } catch (error) {
+    console.log(`metascope: skip ${rc} (${error.message})`);
   }
 }
 
@@ -316,8 +315,8 @@ const configureMidnightCommander = () => {
 
 try {
   configureMidnightCommander();
-} catch (err) {
-  console.log(`metascope: skip Midnight Commander (${err.message})`);
+} catch (error) {
+  console.log(`metascope: skip Midnight Commander (${error.message})`);
 }
 
 const configureTerminator = () => {
@@ -349,8 +348,8 @@ const configureTerminator = () => {
 
 try {
   configureTerminator();
-} catch (err) {
-  console.log(`metascope: skip Terminator (${err.message})`);
+} catch (error) {
+  console.log(`metascope: skip Terminator (${error.message})`);
 }
 
 const check = spawnSync(dest, ['--help'], { encoding: 'utf8' });

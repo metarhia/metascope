@@ -85,7 +85,7 @@ Non-TTY / pipes: prints rendered output once and exits.
 
 ## Formats
 
-Whole-file view (same soft code band): `md`, `js`, `mjs`, `ts`, `.d.ts`, `txt`, `json`, `csv`, `html`, `css`.
+Whole-file view (same soft code band): `md`, `js`, `mjs`, `ts`, `.d.ts`, `txt`, `json`, `csv`, `html`, `css`, `lisp`.
 
 ## Stack
 
