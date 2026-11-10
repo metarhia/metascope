@@ -142,3 +142,33 @@ test('VS16 emoji get a spacer in text but fences keep their source', () => {
   assert.ok(lines.some((l) => stripAnsi(l).includes('⚠️  ABC')));
   assert.strictEqual(blocks[0].source, '// ⚠️ x');
 });
+
+test('inline styles work in quotes, headings and table headers', () => {
+  const src = [
+    '# Title with **bold** and `code`',
+    '',
+    '> quote with **bold**, _italic_ and [link](https://x.y)',
+    '',
+    '| **Head** | plain |',
+    '|---|---|',
+    '| a | b |',
+  ].join('\n');
+  const { lines } = renderMarkdown(src, { width: 80 });
+  const find = (s) => lines.find((l) => stripAnsi(l).includes(s));
+  // band() re-opens its bg after each reset; compare spans without them.
+  const ESC = String.fromCharCode(0x1b);
+  const resets = new RegExp(`${ESC}\\[(?:0|48;2;[\\d;]+)m`, 'g');
+  const bare = (s) => s.replace(resets, '');
+  const has = (line, md) => bare(line).includes(bare(inline(md)));
+  const heading = find('Title with');
+  const quote = find('quote with');
+  const head = find('Head');
+  assert.ok(has(heading, '**bold**'));
+  assert.ok(has(heading, '`code`'));
+  assert.ok(stripAnsi(heading).includes('Title with bold and  code '));
+  assert.ok(has(quote, '**bold**'));
+  assert.ok(has(quote, '_italic_'));
+  assert.ok(quote.includes('\x1b]8;;https://x.y\x07'));
+  assert.ok(stripAnsi(quote).includes('quote with bold, italic and link'));
+  assert.ok(has(head, '**Head**'));
+});
