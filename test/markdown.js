@@ -135,3 +135,10 @@ test('quote lines reflow into paragraphs like plain text', () => {
   assert.deepStrictEqual(at('one two'), { first: 0, last: 1 });
   assert.deepStrictEqual(at('- item'), { first: 3, last: 4 });
 });
+
+test('VS16 emoji get a spacer in text but fences keep their source', () => {
+  const src = ['⚠️ ABC', '', '```js', '// ⚠️ x', '```'].join('\n');
+  const { lines, blocks } = renderMarkdown(src, { width: 40 });
+  assert.ok(lines.some((l) => stripAnsi(l).includes('⚠️  ABC')));
+  assert.strictEqual(blocks[0].source, '// ⚠️ x');
+});
