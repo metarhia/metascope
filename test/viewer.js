@@ -195,3 +195,12 @@ test('selecting run output does not copy screen chrome', () => {
   assert.ok(exit >= 0);
   assert.strictEqual(selectLines(viewer, exit), '');
 });
+
+test('line-number gutter has a grey background and keeps its width', () => {
+  const viewer = viewerWith('md', 'one\ntwo\n', 40);
+  viewer.showLines = true;
+  const overlays = { play: new Map(), copy: new Map() };
+  const row = viewer.paintContentLine(0, 36, 3, overlays);
+  assert.ok(row.startsWith('\x1b[48;2;17;17;19m'));
+  assert.ok(stripAnsi(row).startsWith('  1 one'));
+});
