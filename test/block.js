@@ -80,3 +80,11 @@ test('frameRunOutput shows exit status for finished runs', () => {
   assert.ok(plain.includes('done'));
   assert.ok(plain.includes('exit 0'));
 });
+
+test('quote rows with wide chars or VS16 keep the frame width', () => {
+  const { frameQuoteBlock } = block;
+  const { lines } = frameQuoteBlock(['❓ ask', '⚠️ warn', '你好 plain'], {
+    width: 24,
+  });
+  for (const line of lines) assert.strictEqual(visibleWidth(line), 24);
+});
