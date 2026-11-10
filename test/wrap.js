@@ -27,11 +27,28 @@ test('stripAnsi removes SGR and OSC sequences', () => {
   assert.strictEqual(visibleWidth(link), 5);
 });
 
-test('visibleWidth counts grapheme cells not UTF-16 units', () => {
+test('visibleWidth counts terminal cells not UTF-16 units', () => {
   assert.strictEqual(visibleWidth('abc'), 3);
   assert.strictEqual(visibleWidth('\x1b[31mabc\x1b[0m'), 3);
-  assert.strictEqual(visibleWidth('👍'), 1);
+  assert.strictEqual(visibleWidth('👍'), 2);
+  assert.strictEqual(visibleWidth('❓'), 2);
+  assert.strictEqual(visibleWidth('你好'), 4);
+  assert.strictEqual(visibleWidth('⚠️'), 1); // U+26A0 + VS16 (zero width)
+  assert.strictEqual(visibleWidth('e\u0301'), 1); // e + combining acute
   assert.strictEqual(visibleWidth(''), 0);
+});
+
+test('wide chars: wrap, slice and href use cell columns', () => {
+  for (const row of wrapLine('❓❓❓ 你好你好 abc', 6)) {
+    assert.ok(visibleWidth(row) <= 6, row);
+  }
+  assert.strictEqual(sliceVisible('a你b', 0, 2), 'a ');
+  assert.strictEqual(sliceVisible('a你b', 1, 2), '你');
+  assert.strictEqual(visibleWidth(sliceVisible('⚠️ ok', 0, 3)), 3);
+  assert.strictEqual(padEndVisible('❓', 4), '❓  ');
+  const link = '❓\x1b]8;;https://x.y\x07go\x1b]8;;\x07';
+  assert.strictEqual(hrefAtCol(link, 1), null);
+  assert.strictEqual(hrefAtCol(link, 2), 'https://x.y');
 });
 
 test('wrapLine splits on spaces and keeps short lines', () => {
