@@ -83,3 +83,42 @@ test('orphan pipe lines that are not tables still render', () => {
   assert.ok(plain.includes('FramelessWindowHint'));
   assert.ok(plain.includes('WindowStaysOnTopHint'));
 });
+
+test('long nested list items keep indent with hanging wrap', () => {
+  const src = [
+    '- Data access patterns:',
+    '  - Transaction Script - a procedural pattern where each business ' +
+      'operation is implemented as a function',
+    '- Next top level',
+  ].join('\n');
+  const { lines, origins } = renderMarkdown(src, { width: 40 });
+  const plain = lines.map(stripAnsi);
+  assert.strictEqual(plain[0], '• Data access patterns:');
+  assert.ok(plain[1].startsWith('  • Transaction Script'));
+  const last = plain.indexOf('• Next top level');
+  assert.ok(last > 2);
+  for (const row of plain.slice(2, last)) {
+    assert.ok(row.startsWith('    '), `continuation not hung: ${row}`);
+    assert.ok(row.length <= 40);
+  }
+  assert.deepStrictEqual(origins[2], { first: 1, last: 1 });
+});
+
+test('list item joins indented source continuation lines', () => {
+  const src = [
+    '1. first line',
+    '   second line',
+    '   - nested',
+    '     more nested',
+    '',
+    'Para',
+  ].join('\n');
+  const { lines, origins } = renderMarkdown(src, { width: 80 });
+  const plain = lines.map(stripAnsi);
+  assert.strictEqual(plain[0], '1. first line second line');
+  assert.strictEqual(plain[1], '   • nested more nested');
+  assert.strictEqual(plain[2], '');
+  assert.strictEqual(plain[3], 'Para');
+  assert.deepStrictEqual(origins[0], { first: 0, last: 1 });
+  assert.deepStrictEqual(origins[1], { first: 2, last: 3 });
+});
