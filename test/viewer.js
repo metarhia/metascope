@@ -7,7 +7,7 @@ const path = require('node:path');
 
 const { Viewer } = require('../lib/viewer.js');
 const { render } = require('../lib/render/index.js');
-const { stripAnsi } = require('../lib/wrap.js');
+const { stripAnsi, visibleWidth } = require('../lib/wrap.js');
 
 const FIXTURES = path.join(__dirname, 'fixtures');
 
@@ -203,4 +203,28 @@ test('line-number gutter has a grey background and keeps its width', () => {
   const row = viewer.paintContentLine(0, 36, 3, overlays);
   assert.ok(row.startsWith('\x1b[48;2;17;17;19m'));
   assert.ok(stripAnsi(row).startsWith('  1 one'));
+});
+
+test('f toggles a centered file path header that shifts mouse rows', () => {
+  const viewer = viewerWith('md', 'one\ntwo\n', 40);
+  viewer.filePath = path.join(path.sep, 'tmp', 'docs', 'note.md');
+  const before = viewer.screenToDoc(10, 2);
+  viewer.handleKey({ name: 'char', ch: 'f' }, () => {});
+  assert.strictEqual(viewer.showHeader, true);
+  assert.strictEqual(viewer.chromeHeight(), 1);
+  assert.strictEqual(viewer.screenToDoc(10, 2), null);
+  assert.deepStrictEqual(viewer.screenToDoc(10, 3), before);
+
+  const header = viewer.buildHeader(30);
+  const plain = stripAnsi(header);
+  assert.strictEqual(visibleWidth(header), 30);
+  assert.strictEqual(plain.trim(), '/tmp/docs/note.md');
+  assert.ok(plain.startsWith('      /tmp'));
+  assert.ok(header.startsWith('\x1b[48;2;44;44;48m'));
+  assert.ok(header.includes('\x1b[38;2;255;255;255mnote.md'));
+
+  const narrow = stripAnsi(viewer.buildHeader(12)).trim();
+  assert.strictEqual(narrow, '…ocs/note.md');
+  viewer.handleKey({ name: 'char', ch: 'f' }, () => {});
+  assert.strictEqual(viewer.showHeader, false);
 });
