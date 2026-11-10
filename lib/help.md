@@ -12,6 +12,7 @@
 | /           | search                            |
 | n / N       | next / prev match                 |
 | l           | toggle line numbers               |
+| f           | toggle file path header           |
 | r           | reload file / directory           |
 | ⧉ click     | copy inner code                   |
 | fence click | copy example source               |
