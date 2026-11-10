@@ -122,3 +122,16 @@ test('list item joins indented source continuation lines', () => {
   assert.deepStrictEqual(origins[0], { first: 0, last: 1 });
   assert.deepStrictEqual(origins[1], { first: 2, last: 3 });
 });
+
+test('quote lines reflow into paragraphs like plain text', () => {
+  const src = ['> one two', '> three four', '>', '> - item', '> five'].join(
+    '\n',
+  );
+  const { lines, origins } = renderMarkdown(src, { width: 80 });
+  const rows = lines.map((l) => stripAnsi(l).trim()).filter((l) => l);
+  assert.deepStrictEqual(rows, ['│ one two three four', '│', '│ - item five']);
+  const at = (text) =>
+    origins[lines.findIndex((l) => stripAnsi(l).includes(text))];
+  assert.deepStrictEqual(at('one two'), { first: 0, last: 1 });
+  assert.deepStrictEqual(at('- item'), { first: 3, last: 4 });
+});
