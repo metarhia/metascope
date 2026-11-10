@@ -111,3 +111,13 @@ test('wrapLine keeps OSC 8 href on wrapped rows', () => {
   assert.strictEqual(hrefAtCol(rows[0], 0), 'https://x');
   assert.strictEqual(hrefAtCol(rows[1], 0), 'https://x');
 });
+
+test('padEmoji gives narrow VS16 emoji a second cell, display only', () => {
+  const { padEmoji } = wrap;
+  assert.strictEqual(padEmoji('⚠️ ABC'), '⚠️  ABC');
+  assert.strictEqual(padEmoji('1️⃣ one'), '1️⃣  one');
+  assert.strictEqual(padEmoji('❓ wide'), '❓ wide'); // no VS16
+  assert.strictEqual(padEmoji('plain'), 'plain');
+  const flag = '🏳️\u200d🌈'; // ZWJ sequence stays intact
+  assert.strictEqual(padEmoji(flag), flag);
+});
