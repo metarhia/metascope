@@ -215,16 +215,18 @@ test('f toggles a centered file path header that shifts mouse rows', () => {
   assert.strictEqual(viewer.screenToDoc(10, 2), null);
   assert.deepStrictEqual(viewer.screenToDoc(10, 3), before);
 
+  // Native separators: \ on Windows, / elsewhere.
+  const sep = path.sep;
   const header = viewer.buildHeader(30);
   const plain = stripAnsi(header);
   assert.strictEqual(visibleWidth(header), 30);
-  assert.strictEqual(plain.trim(), '/tmp/docs/note.md');
-  assert.ok(plain.startsWith('      /tmp'));
+  assert.strictEqual(plain.trim(), `${sep}tmp${sep}docs${sep}note.md`);
+  assert.ok(plain.startsWith(`      ${sep}tmp`));
   assert.ok(header.startsWith('\x1b[48;2;44;44;48m'));
   assert.ok(header.includes('\x1b[38;2;255;255;255mnote.md'));
 
   const narrow = stripAnsi(viewer.buildHeader(12)).trim();
-  assert.strictEqual(narrow, '…ocs/note.md');
+  assert.strictEqual(narrow, `…ocs${sep}note.md`);
   viewer.handleKey({ name: 'char', ch: 'f' }, () => {});
   assert.strictEqual(viewer.showHeader, false);
 });
