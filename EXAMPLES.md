@@ -20,7 +20,7 @@ Background brightness marks the level — no `#` characters in the view.
 
 ###### Heading level 6
 
-Inline styles: **bold**, _italic_, `inline code`, `Array`, `Object`, and a [link](https://metarhia.com).
+Inline styles: **bold**, _italic_, ~~strikethrough~~, ==highlight==, `inline code`, `Array`, `Object`, and a [link](https://metarhia.com).
 
 ---
 

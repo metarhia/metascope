@@ -172,3 +172,26 @@ test('inline styles work in quotes, headings and table headers', () => {
   assert.ok(stripAnsi(quote).includes('quote with bold, italic and link'));
   assert.ok(has(head, '**Head**'));
 });
+
+test('inline colors: bold white, italic yellow, strike red, mark blue', () => {
+  const ESC = String.fromCharCode(0x1b);
+  const out = inline('**b** _i_ ~~s~~ ==m== a == b ~~ x ~~');
+  assert.ok(out.includes(`${ESC}[1;38;2;255;255;255mb`));
+  assert.ok(out.includes(`${ESC}[3;38;2;240;205;90mi`));
+  assert.ok(out.includes(`${ESC}[9;38;2;235;85;85ms`));
+  assert.ok(out.includes(`${ESC}[38;2;95;160;255mm`));
+  assert.strictEqual(stripAnsi(out), 'b i s m a == b ~~ x ~~');
+});
+
+test('strike and mark work inside quotes, lists and headings', () => {
+  const src = '## ~~old~~ title\n\n> ==key== point\n\n- ~~done~~ item';
+  const { lines } = renderMarkdown(src, { width: 60 });
+  const plain = lines.map(stripAnsi).join('\n');
+  assert.ok(plain.includes('old title'));
+  assert.ok(plain.includes('key point'));
+  assert.ok(plain.includes('done item'));
+  const all = lines.join('');
+  assert.ok(all.includes('9;38;2;235;85;85mold'));
+  assert.ok(all.includes('38;2;95;160;255mkey'));
+  assert.ok(all.includes('9;38;2;235;85;85mdone'));
+});
