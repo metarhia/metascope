@@ -228,3 +228,21 @@ test('f toggles a centered file path header that shifts mouse rows', () => {
   viewer.handleKey({ name: 'char', ch: 'f' }, () => {});
   assert.strictEqual(viewer.showHeader, false);
 });
+
+test('line numbers: render and paint widths agree after reflow', () => {
+  // 12 source lines reflow into 6 rows: gutter digits differ (2 vs 1).
+  const quote = ['one', 'two', 'three', 'four', 'five', 'six', 'seven']
+    .concat(['eight', 'nine', 'ten'])
+    .map((w) => `> ${w}`);
+  const src = ['# Title', '', ...quote].join('\n');
+  const viewer = new Viewer('note.md');
+  viewer.source = src;
+  viewer.lang = 'md';
+  viewer.showLines = true;
+  viewer.rebuild();
+  const contentW = viewer.contentWidth();
+  for (const line of viewer.lines) {
+    const w = visibleWidth(line);
+    assert.ok(w === 0 || w === contentW, `row width ${w} != ${contentW}`);
+  }
+});
