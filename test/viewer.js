@@ -246,3 +246,56 @@ test('line numbers: render and paint widths agree after reflow', () => {
     assert.ok(w === 0 || w === contentW, `row width ${w} != ${contentW}`);
   }
 });
+
+const selectCols = (viewer, from, to) => {
+  viewer.selection = { anchor: from, focus: to };
+  return viewer.getSelectedText();
+};
+
+test('selecting one word copies just that word', () => {
+  const viewer = viewerWith('md', 'hello brave new world\n', 80);
+  const row = lineWith(viewer.lines, 'brave');
+  const col = stripAnsi(viewer.lines[row]).indexOf('brave');
+  const word = selectCols(
+    viewer,
+    { lineIndex: row, innerCol: col },
+    { lineIndex: row, innerCol: col + 4 },
+  );
+  assert.strictEqual(word, 'brave');
+  // Reversed drag (right to left) gives the same text.
+  const back = selectCols(
+    viewer,
+    { lineIndex: row, innerCol: col + 4 },
+    { lineIndex: row, innerCol: col },
+  );
+  assert.strictEqual(back, 'brave');
+});
+
+test('partial selection inside code keeps visible text and indentation', () => {
+  const src = 'function f() {\n  return 42;\n}\n';
+  const viewer = viewerWith('js', src, 80);
+  const head = lineWith(viewer.lines, 'function f');
+  const ret = lineWith(viewer.lines, 'return 42');
+  const col = stripAnsi(viewer.lines[head]).indexOf('f()');
+  const end = stripAnsi(viewer.lines[ret]).indexOf('42') + 1;
+  const text = selectCols(
+    viewer,
+    { lineIndex: head, innerCol: col },
+    { lineIndex: ret, innerCol: end },
+  );
+  assert.strictEqual(text, 'f() {\n  return 42');
+});
+
+test('copying a partial selection drops the VS16 display spacer', () => {
+  const viewer = viewerWith('md', 'say ⚠️ ABC now\n', 80);
+  const row = lineWith(viewer.lines, 'ABC');
+  const plain = stripAnsi(viewer.lines[row]);
+  const from = visibleWidth(plain.slice(0, plain.indexOf('⚠')));
+  const to = visibleWidth(plain.slice(0, plain.indexOf('C')));
+  const text = selectCols(
+    viewer,
+    { lineIndex: row, innerCol: from },
+    { lineIndex: row, innerCol: to },
+  );
+  assert.strictEqual(text, '⚠️ ABC');
+});
